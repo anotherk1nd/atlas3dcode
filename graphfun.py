@@ -116,8 +116,8 @@ cscarray = sp.array(csc)
 datalamarray = sp.array(lam)
 
 cscfloat = cscarray.astype(np.float)
-logcsc = sp.log(cscfloat)
-print logcsc
+#logcsc = sp.log(cscfloat)
+#print logcsc
 
 
 # THIS PLOTS CLASSIFICATION OF ROTATION AS A FUNCTION OF CERSIC INDEX
