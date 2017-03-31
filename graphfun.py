@@ -154,25 +154,6 @@ pl.show()
 #I NEED TO PLOT MY PREDICTIONS TO SHOW THEIR SUCCESS HERE
 
 """
-"""
-w = clf.coef_[0] #THIS ONLY WORKS FOR SVM
-a = -w[0] / w[1]
-xx = sp.linspace(0,12)
-yy = a * xx - (clf.intercept_[0]) / w[1]
-pl.plot(xx,yy)
-
-pl.show()
-
-
-#We do a quick check to make sure that all the entries are in the same order for the Linking Photo data and the Original Atlas3D set
-
-repairlist = sp.zeros(260)
-for i in range(1,260):
-    if datacsc.field(0)[i+1] != datalam.field(2)[i]:
-        repairlist[i] = datacsc.field(1)[i]
-print repairlist
-"""
-#Since we are returned the array of zeros we started with, all the entries are in the same order and we can start playing
 
 #We try to predict based on D/T alone:
 dt = datacsc.field(19)[1:]
