@@ -18,9 +18,9 @@ colnames = hdulistcsc[0]
 #print colnames
 tbdata = hdulistcsc[1]
 #print tbdata
-#cols = hdulistcsc[1].columns
-#cols.info()
-#cols.names
+cols = hdulistcsc[1].columns
+cols.info()
+cols.names
 
 #print cols[:,0]
 #pl.plot(cols[:,0],cols[:,1])
@@ -34,15 +34,19 @@ colinfo = hdulistcsc[0].data # gives column names, info
 #print colinfo
 datacsc = hdulistcsc[1].data
 csc = datacsc.field(5)[1:] #Using from 1 excludes the field name which is included in the data CERSIC INDEX FROM SINGLE FIT
-
+print csc
 #We import the atlas3d data in order to access the lambda value and use the classifier code used in 1st attempt to implement classifier sklearn
 fnrotlam = 'C:\\Users\\Joshua\\Documents\\Term 1\\Project\\Code\\atlas3dcode\\atlas3d.fit'
 hdulistlam = fits.open(fnrotlam)
 colinfoatlas = hdulistlam[0].data
-#print colinfoatlas
+print colinfoatlas
 datalam = hdulistlam[1].data
-lam = datalam.field(7)
+#lam = datalam.field(7) #THIS IS ACTUALLY Vsig!!!!!!!
+vsig = datalam.field(7)
+print 'This is vsig: ', vsig
+lam = datalam.field(9)
 print 'This is lam', lam
+#epse = datalam.field(
 
 fs = datalam.field(11)
 fcount = 0
@@ -124,17 +128,17 @@ cscfloat = cscarray.astype(np.float)
 for i in range(len(fs)):
    # correct = pl.plot(cscarray[i],datalamarray[i], 'bo')
     if fs[i] == 'F':
-        fast_rotators, = pl.plot(cscfloat[i],datalamarray[i],'rx')
+        fast_rotators, = pl.plot(sp.log(cscfloat[i]),sp.log(datalamarray[i]),'rx')
     else:
-        slow_rotators, = pl.plot(cscfloat[i],datalamarray[i],'gx')
+        slow_rotators, = pl.plot(sp.log(cscfloat[i]),sp.log(datalamarray[i]),'gx')
 
 
 #pl.plot(csc,datalam,'o')
 pl.title('Classification of Rotation as a function of Cersic Index')
-pl.xlabel('Cersic Index')
+pl.xlabel('Log Cersic Index')
 #pl.xlim(0,12)
 #pl.ylim(0,0.8)
-pl.ylabel('Lambda Value')
+pl.ylabel('Log Lambda Value')
 pl.legend([fast_rotators, slow_rotators], ['Fast Rotators','Slow Rotators'])
 pl.show()
 
