@@ -1,5 +1,6 @@
 """
 Here we attempt to implement sklearn with the photometric data.
+THERE ARE 224 FR'S AND 36 SR'S
 """
 import matplotlib.pyplot as pl
 import sklearn
@@ -40,17 +41,7 @@ atlas3d = 'C:\\Users\\Joshua\\Documents\\Term 1\\Project\\Code\\atlas3dcode\\atl
 hdulistatlas3d = fits.open(atlas3d)
 dataatlas3d = hdulistatlas3d[1].data
 
-
 fs = dataatlas3d.field(11)
-fcount = 0
-scount = 0
-for i in range(len(fs)):
-    if fs[i] == 'F':
-        fcount +=1
-    else:
-        scount +=1
-print 'Fcount:', fcount
-print 'Scount:', scount
 
 #We create an array containing a binary interpretation of the fast/slow
 #categorisation, with 1 indicating fast rotator, so we can pass the array to 
