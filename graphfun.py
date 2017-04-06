@@ -49,15 +49,6 @@ lam = datalam.field(9)
 eps = datalam.field(4) #ellipticity
 
 fs = datalam.field(11)
-fcount = 0
-scount = 0
-for i in range(len(fs)):
-    if fs[i] == 'F':
-        fcount +=1
-    else:
-        scount +=1
-print 'Fcount:', fcount
-print 'Scount:', scount
 
 #We create an array containing a binary interpretation of the fast/slow
 #categorisation, with 1 indicating fast rotator, so we can pass the array to 
