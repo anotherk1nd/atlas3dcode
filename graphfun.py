@@ -43,10 +43,10 @@ print colinfoatlas
 datalam = hdulistlam[1].data
 #lam = datalam.field(7) #THIS IS ACTUALLY Vsig!!!!!!!
 vsig = datalam.field(7)
-print 'This is vsig: ', vsig
+#print 'This is vsig: ', vsig
 lam = datalam.field(9)
-print 'This is lam', lam
-#epse = datalam.field(
+#print 'This is lam', lam
+eps = datalam.field(4) #ellipticity
 
 fs = datalam.field(11)
 fcount = 0
@@ -118,6 +118,8 @@ print clf.get_params()
 #We create arrays for to be able to plot the data, rather than as a list
 cscarray = sp.array(csc)
 datalamarray = sp.array(lam)
+epsarray =sp.array(eps)
+lameps = lam/epsarray
 
 cscfloat = cscarray.astype(np.float)
 #logcsc = sp.log(cscfloat)
@@ -127,18 +129,31 @@ cscfloat = cscarray.astype(np.float)
 # THIS PLOTS CLASSIFICATION OF ROTATION AS A FUNCTION OF CERSIC INDEX
 for i in range(len(fs)):
    # correct = pl.plot(cscarray[i],datalamarray[i], 'bo')
+    pl.plot(cscfloat[i],-0.034*cscfloat[i]+0.526)
     if fs[i] == 'F':
-        fast_rotators, = pl.plot(sp.log(cscfloat[i]),sp.log(datalamarray[i]),'rx')
+        fast_rotators, = pl.plot(cscfloat[i],lameps[i],'rx')
     else:
-        slow_rotators, = pl.plot(sp.log(cscfloat[i]),sp.log(datalamarray[i]),'gx')
+        slow_rotators, = pl.plot(cscfloat[i],lameps[i],'gx')
+
+x = sp.arange(0,12,0.1)
+def regress(x):
+    return m*x + c
+#m = -0.034 WITHOUT EPS REGRESSION VALUES
+#c = 0.526
+m = 0.033 #WITH EPS
+c = 1.33
+y = regress(x)
+print y
+
+pl.plot(x,y)
 
 
 #pl.plot(csc,datalam,'o')
 pl.title('Classification of Rotation as a function of Cersic Index')
-pl.xlabel('Log Cersic Index')
+pl.xlabel('Cersic Index')
 #pl.xlim(0,12)
 #pl.ylim(0,0.8)
-pl.ylabel('Log Lambda Value')
+pl.ylabel('Lambda Value')
 pl.legend([fast_rotators, slow_rotators], ['Fast Rotators','Slow Rotators'])
 pl.show()
 
