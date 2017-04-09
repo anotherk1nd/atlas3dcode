@@ -51,11 +51,26 @@ for i in range(len(fs)):
 
 fast_rots = pd.DataFrame.from_dict(datalam[flist])
 fast_rots1 = fast_rots.assign(id=flist)#we add column with position in original fits file
-print fast_rots1
-print flist
+fast_rots_cersic = pd.DataFrame.from_dict(datacsc[flist])
+fast_rots_cersic.columns = fast_rots_cersic.iloc[0]
+#print fast_rots_cersic
+frames_fast_rots = [fast_rots1,fast_rots_cersic]
+#print frames_fast_rots
+fast_rots = pd.concat(frames_fast_rots,axis=1)
+fast_rots = fast_rots[1:]
 slow_rots = pd.DataFrame.from_dict(datalam[slist])
 slow_rots1 = slow_rots.assign(id=slist)
-print slow_rots1
+slow_rots_cersic = pd.DataFrame.from_dict(datacsc[slist])
+slow_rots_cersic.columns = fast_rots_cersic.columns
+frames_slow_rots = [slow_rots1,slow_rots_cersic]
+slow_rots = pd.concat(frames_slow_rots,axis=1)
+#print 'slow'
+#print slow_rots #Slow rotators total panda is GOOD!
+print 'fast'
+print fast_rots
+
+fast_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_try.csv')
+slow_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_try.csv')
 
 #print flist, slist
 #We perform a linear regression using least squares fit

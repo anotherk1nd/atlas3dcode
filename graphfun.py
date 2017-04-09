@@ -9,6 +9,7 @@ import scipy as sp
 import numpy as np
 from astropy.io.fits import getheader
 from itertools import product # For decision boundary plotting
+import pandas as pd
 
 pl.close('all')
 fncsc = 'C:\\Users\\Joshua\\Documents\\Term 1\\Project\\Data\\atlas3d\\linkingphotometric.fit'
@@ -21,6 +22,10 @@ tbdata = hdulistcsc[1]
 cols = hdulistcsc[1].columns
 cols.info()
 cols.names
+
+slow_rots1 = pd.read_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_with_id.csv')
+fast_rots1 = pd.read_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_with_id.csv')
+
 
 #print cols[:,0]
 #pl.plot(cols[:,0],cols[:,1])
@@ -87,23 +92,9 @@ prediction = clf.predict(csctest).copy()
 #print 'Prediction: ', prediction
 #print 'True Values: ', fstest
 
-#We assess the accuracy of the predictions. for some reason, the prediction.all method doesn't work,
-#so had to code it manually.
-true = 0
-false = 0
-for i in range(len(prediction)):
-    if prediction[i] == fstest[i]:
-        true += 1
-    else:
-        false += 1
-
-print 'True: ',true
-print 'False: ',false
-total = true + false
-print 'Cersic Success rate: ', round(float(true)/total,2)
 #We see a success rate of around 71% compared to what would be 50% for random guesses due to binary nature
 
-print clf.score(csctest,fstest) #This computes the success rate by itself
+print round(clf.score(csctest,fstest),2) #This computes the success rate by itself
 print clf.get_params()
 
 #We create arrays for to be able to plot the data, rather than as a list
@@ -126,12 +117,13 @@ for i in range(len(fs)):
     else:
         slow_rotators, = pl.plot(cscfloat[i],lameps[i],'gx')
 
+#Here we plot the regression using linregress in data_analysis.py
 x = sp.arange(0,12,0.1)
 def regress(x):
     return m*x + c
-#m = -0.034 WITHOUT EPS REGRESSION VALUES
+#m = -0.034 WITHOUT EPSILON REGRESSION VALUES
 #c = 0.526
-m = 0.033 #WITH EPS
+m = 0.033 #WITH EPSILON
 c = 1.33
 y = regress(x)
 print y
@@ -175,19 +167,7 @@ clf.fit(dttrain,fstrain) # We train the tree using the lamre value and F,S class
 prediction = clf.predict(dttest).copy()
 #print 'Prediction: ', prediction
 #print 'True Values: ', fstest
-true = 0
-false = 0
-for i in range(len(prediction)):
-    if prediction[i] == fstest[i]:
-        true += 1
-    else:
-        false += 1
-
-print 'True: ',true
-print 'False: ',false
-total = true + false
-print 'D/T Success rate: ', round(float(true)/total,2)
-
+print round(clf.score(dttest,fstest),2)
 
 """
 
