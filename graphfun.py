@@ -23,8 +23,8 @@ cols = hdulistcsc[1].columns
 cols.info()
 cols.names
 
-slow_rots1 = pd.read_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_with_id.csv')
-fast_rots1 = pd.read_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_with_id.csv')
+slow_rots1 = pd.read_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_fin.csv')
+fast_rots1 = pd.read_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_fin.csv')
 
 
 #print cols[:,0]
