@@ -98,8 +98,8 @@ slow_rots.rename(columns={35:'lam_sqrt_eps'},inplace=True)
 #print_full(fast_rots)
 print list(slow_rots.columns.values)
 
-#fast_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_fin.csv')
-#slow_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_fin.csv')
+fast_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_fin.csv')
+slow_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_fin.csv')
 
 #print flist, slist
 #We perform a linear regression using least squares fit
