@@ -1,9 +1,18 @@
 import scipy as sp
 from scipy import stats
 import numpy as np
+np.set_printoptions(threshold='inf')
 import matplotlib.pyplot as pl
+pl.close('all')
 from astropy.io import fits
 import pandas as pd
+
+def print_full(x): #Function to see full tables
+    pd.set_option('display.max_rows', len(x))
+    pd.set_option('display.max_columns',len(x))
+    print(x)
+    pd.reset_option('display.max_rows')
+    pd.reset_option('display.max_columns')
 
 fncsc = 'C:\\Users\\Joshua\\Documents\\Term 1\\Project\\Data\\atlas3d\\linkingphotometric.fit'
 hdulistcsc = fits.open(fncsc)
@@ -66,11 +75,31 @@ frames_slow_rots = [slow_rots1,slow_rots_cersic]
 slow_rots = pd.concat(frames_slow_rots,axis=1)
 #print 'slow'
 #print slow_rots #Slow rotators total panda is GOOD!
-print 'fast'
-print fast_rots
+#print 'fast'
+#print_full(fast_rots)
+delete = ['Simbad','NED','LEDA','_RA','_DE','name']
+fast_rots.drop(['Simbad','NED','LEDA','_RA','_DE','name     '], axis=1, inplace=True)#Delete repeated and unnecessary columns
+#print fast_rots
+slow_rots.drop(['Simbad','NED','LEDA','_RA','_DE','name     '], axis=1, inplace=True)#Delete repeated and unnecessary columns
+fast_rots_lam_Re = fast_rots.iloc[:,10] # Pick out lamre
+fast_rots_eps = fast_rots.iloc[:,5]
+fast_lam_sqrt_eps = fast_rots_lam_Re.div(sp.sqrt(fast_rots_eps))
+#print fast_lam_sqrt_eps
+fast_rots.loc[:,35] = fast_lam_sqrt_eps[:]
+fast_rots.rename(columns={35:'lam_sqrt_eps'},inplace=True)
+#print_full(slow_rots)
+#print fast_rots.iloc[:,10]
+slow_rots_lam_Re = slow_rots.iloc[:,10]
+slow_rots_eps = slow_rots.iloc[:,5]
+slow_lam_sqrt_eps = slow_rots_lam_Re.div(sp.sqrt(slow_rots_eps))
+#print fast_lam_sqrt_eps
+slow_rots.loc[:,35] = slow_lam_sqrt_eps[:]
+slow_rots.rename(columns={35:'lam_sqrt_eps'},inplace=True)
+#print_full(fast_rots)
+print list(slow_rots.columns.values)
 
-fast_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_try.csv')
-slow_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_try.csv')
+#fast_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_fin.csv')
+#slow_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_fin.csv')
 
 #print flist, slist
 #We perform a linear regression using least squares fit
@@ -81,3 +110,6 @@ print slope, intercept, r_value, p_value, std_err
 slope, intercept, r_value, p_value, std_err = stats.linregress(cscfloat,lameps)
 print 'Including eps ',slope, intercept, r_value, p_value, std_err
 """
+slow_rots.plot.scatter(x='Rmax', y='lam_sqrt_eps',color='DarkBlue',title='Slow Rotators Rmax Dependence on Lambda')
+fast_rots.plot.scatter(x='Rmax', y='lam_sqrt_eps',color='Pink',title='Fast Rotators Rmax Dependence on Lambda')
+pl.show()
