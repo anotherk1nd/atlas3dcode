@@ -3,9 +3,13 @@ from scipy import stats
 import numpy as np
 np.set_printoptions(threshold='inf')
 import matplotlib.pyplot as pl
+import matplotlib
+matplotlib.style.use('classic')
 pl.close('all')
 from astropy.io import fits
 import pandas as pd
+from pandas.tools.plotting import scatter_matrix
+from pandas.tools.plotting import radviz
 
 def print_full(x): #Function to see full tables
     pd.set_option('display.max_rows', len(x))
@@ -96,10 +100,16 @@ slow_lam_sqrt_eps = slow_rots_lam_Re.div(sp.sqrt(slow_rots_eps))
 slow_rots.loc[:,35] = slow_lam_sqrt_eps[:]
 slow_rots.rename(columns={35:'lam_sqrt_eps'},inplace=True)
 #print_full(fast_rots)
-print list(slow_rots.columns.values)
+#print list(slow_rots.columns.values)
 
-fast_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_fin.csv')
-slow_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_fin.csv')
+#We remove spaces in the column names
+fast_rots.rename(columns={'mu_e ': 'mu_e', 'R_e  ': 'R_e', 'n   ': 'n', 'n_b ': 'n_b', 'q_b ': 'q_b', 'm0_d ': 'm0_d'}, inplace=True)
+fast_rots.rename(columns={'R_d ': 'R_d', 'q_d ': 'q_d', 'D/T ': 'D/T'}, inplace=True)
+slow_rots.rename(columns={'mu_e ': 'mu_e', 'R_e  ': 'R_e', 'n   ': 'n', 'n_b ': 'n_b', 'q_b ': 'q_b', 'm0_d ': 'm0_d'}, inplace=True)
+slow_rots.rename(columns={'R_d ': 'R_d', 'q_d ': 'q_d', 'D/T ': 'D/T'}, inplace=True)
+
+#fast_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_fin.csv')
+#slow_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_fin.csv')
 
 #print flist, slist
 #We perform a linear regression using least squares fit
@@ -110,6 +120,34 @@ print slope, intercept, r_value, p_value, std_err
 slope, intercept, r_value, p_value, std_err = stats.linregress(cscfloat,lameps)
 print 'Including eps ',slope, intercept, r_value, p_value, std_err
 """
-slow_rots.plot.scatter(x='Rmax', y='lam_sqrt_eps',color='DarkBlue',title='Slow Rotators Rmax Dependence on Lambda')
-fast_rots.plot.scatter(x='Rmax', y='lam_sqrt_eps',color='Pink',title='Fast Rotators Rmax Dependence on Lambda')
+"""
+pl.scatter(slow_rots.Rmax,slow_rots.lam_sqrt_eps,c='r',label='Slow Rotators')
+pl.scatter(fast_rots.Rmax,fast_rots.lam_sqrt_eps,c='g',label='Fast Rotators')
+#slow_rots.pl.scatter(x='Rmax', y='lam_sqrt_eps',color='DarkBlue',title='Slow Rotators Rmax Dependence on Lambda')
+#fast_rots.plot.scatter(x='Rmax', y='lam_sqrt_eps',color='Pink',title='Fast Rotators Rmax Dependence on Lambda')
+pl.title('Rotators Rmax Dependence on Lambda')
+pl.xlabel('Rmax')
+pl.ylim(ymin=0.0)
+pl.ylabel(r"$\lambda_{Re}$")
 pl.show()
+"""
+slow_rots_edit = slow_rots.drop(['_RAJ2000', '_DEJ2000','id'],axis=1)
+slow_rots_edit.info()
+params =['Rmax','epse','lam_sqrt_eps','D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e']
+slow_rots_edit[params] = slow_rots_edit[params].astype(float)
+slow_rots_edit.info()
+#scatter_matrix(slow_rots_edit[params],alpha=0.2,figsize=(12, 12), diagonal='kde')
+#pl.show()
+
+fast_rots_edit = fast_rots.drop(['_RAJ2000', '_DEJ2000','id'],axis=1)
+#fast_rots_edit.info()
+params =['Rmax','epse','lam_sqrt_eps','D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e']
+fast_rots_edit[params] = fast_rots_edit[params].astype(float)
+#fast_rots_edit.info()
+#scatter_matrix(fast_rots_edit[params],alpha=0.2,figsize=(12, 12), diagonal='kde')
+#pl.show()
+params1 =['D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e','F_S'] #INCLUDES F/S
+all_rots = pd.concat([fast_rots_edit,slow_rots_edit])
+print all_rots[params1]
+#radviz(all_rots[params1], 'F_S')
+#pl.show()
