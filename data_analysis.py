@@ -136,18 +136,18 @@ slow_rots_edit.info()
 params =['Rmax','epse','lam_sqrt_eps','D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e']
 slow_rots_edit[params] = slow_rots_edit[params].astype(float)
 slow_rots_edit.info()
-#scatter_matrix(slow_rots_edit[params],alpha=0.2,figsize=(12, 12), diagonal='kde')
-#pl.show()
+scatter_matrix(slow_rots_edit[params],alpha=0.2, diagonal='kde')
+pl.show()
 
 fast_rots_edit = fast_rots.drop(['_RAJ2000', '_DEJ2000','id'],axis=1)
 #fast_rots_edit.info()
 params =['Rmax','epse','lam_sqrt_eps','D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e']
 fast_rots_edit[params] = fast_rots_edit[params].astype(float)
 #fast_rots_edit.info()
-#scatter_matrix(fast_rots_edit[params],alpha=0.2,figsize=(12, 12), diagonal='kde')
+scatter_matrix(fast_rots_edit[params],alpha=0.2, diagonal='kde')
 #pl.show()
 params1 =['D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e','F_S'] #INCLUDES F/S
 all_rots = pd.concat([fast_rots_edit,slow_rots_edit])
-print all_rots[params1]
+#print all_rots[params1]
 #radviz(all_rots[params1], 'F_S')
-#pl.show()
+pl.show()
