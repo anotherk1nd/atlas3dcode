@@ -137,6 +137,7 @@ params =['Rmax','epse','lam_sqrt_eps','D/T','n','n_b','q_b','m0_d','R_d','q_d','
 slow_rots_edit[params] = slow_rots_edit[params].astype(float)
 slow_rots_edit.info()
 scatter_matrix(slow_rots_edit[params],alpha=0.2, diagonal='kde')
+#pl.title('Scatter Matrix of Spectroscopic Parameters for Slow Rotators') #Doesn't display properly.
 pl.show()
 
 fast_rots_edit = fast_rots.drop(['_RAJ2000', '_DEJ2000','id'],axis=1)
@@ -145,9 +146,11 @@ params =['Rmax','epse','lam_sqrt_eps','D/T','n','n_b','q_b','m0_d','R_d','q_d','
 fast_rots_edit[params] = fast_rots_edit[params].astype(float)
 #fast_rots_edit.info()
 scatter_matrix(fast_rots_edit[params],alpha=0.2, diagonal='kde')
+#pl.title('Scatter Matrix of Spectroscopic Parameters for Fast Rotators')
 #pl.show()
 params1 =['D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e','F_S'] #INCLUDES F/S
-all_rots = pd.concat([fast_rots_edit,slow_rots_edit])
+all_rots_edit = pd.concat([fast_rots_edit,slow_rots_edit])
+scatter_matrix(all_rots_edit[params],alpha=0.2, diagonal='kde')
 #print all_rots[params1]
 #radviz(all_rots[params1], 'F_S')
 pl.show()
