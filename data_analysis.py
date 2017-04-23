@@ -136,21 +136,58 @@ slow_rots_edit.info()
 params =['Rmax','epse','lam_sqrt_eps','D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e']
 slow_rots_edit[params] = slow_rots_edit[params].astype(float)
 slow_rots_edit.info()
-scatter_matrix(slow_rots_edit[params],alpha=0.2, diagonal='kde')
+#slow_rots_edit.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_edit.csv')
+axs = scatter_matrix(slow_rots_edit[params],alpha=0.2, diagonal='kde')
+n = len(slow_rots_edit[params].columns)
+for x in range(n):
+    for y in range(n):
+        # to get the axis of subplots
+        ax = axs[x, y]
+        # to make x axis name vertical  
+        ax.xaxis.label.set_rotation(90)
+        # to make y axis name horizontal 
+        ax.yaxis.label.set_rotation(0)
+        # to make sure y axis names are outside the plot area
+        ax.yaxis.labelpad = 50
 #pl.title('Scatter Matrix of Spectroscopic Parameters for Slow Rotators') #Doesn't display properly.
-pl.show()
+#pl.show()
 
 fast_rots_edit = fast_rots.drop(['_RAJ2000', '_DEJ2000','id'],axis=1)
 #fast_rots_edit.info()
 params =['Rmax','epse','lam_sqrt_eps','D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e']
 fast_rots_edit[params] = fast_rots_edit[params].astype(float)
+#fast_rots_edit.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_edit.csv')
 #fast_rots_edit.info()
-scatter_matrix(fast_rots_edit[params],alpha=0.2, diagonal='kde')
+axs = scatter_matrix(fast_rots_edit[params],alpha=0.2, diagonal='kde')
+#axs = pd.scatter_matrix( df, alpha=0.2, diagonal='kde')
+n = len(fast_rots_edit[params].columns)
+for x in range(n):
+    for y in range(n):
+        # to get the axis of subplots
+        ax = axs[x, y]
+        # to make x axis name vertical  
+        ax.xaxis.label.set_rotation(90)
+        # to make y axis name horizontal 
+        ax.yaxis.label.set_rotation(0)
+        # to make sure y axis names are outside the plot area
+        ax.yaxis.labelpad = 50
 #pl.title('Scatter Matrix of Spectroscopic Parameters for Fast Rotators')
 #pl.show()
 params1 =['D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e','F_S'] #INCLUDES F/S
 all_rots_edit = pd.concat([fast_rots_edit,slow_rots_edit])
-scatter_matrix(all_rots_edit[params],alpha=0.2, diagonal='kde')
+#all_rots_edit.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\all_rots_edit.csv')
+axs = scatter_matrix(all_rots_edit[params],alpha=0.2, diagonal='kde')
+n = len(all_rots_edit[params].columns)
+for x in range(n):
+    for y in range(n):
+        # to get the axis of subplots
+        ax = axs[x, y]
+        # to make x axis name vertical  
+        ax.xaxis.label.set_rotation(90)
+        # to make y axis name horizontal 
+        ax.yaxis.label.set_rotation(0)
+        # to make sure y axis names are outside the plot area
+        ax.yaxis.labelpad = 50
 #print all_rots[params1]
 #radviz(all_rots[params1], 'F_S')
 pl.show()

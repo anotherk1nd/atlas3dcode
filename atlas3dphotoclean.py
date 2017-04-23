@@ -92,11 +92,22 @@ print 'True: ',true
 print 'False: ',false
 total = true + false
 print 'Success rate: ', round(float(true)/total,2)
-#We see a success rate of around 71% compared to what would be 50% for random guesses due to binary nature
+#We see a success rate of around 71% compared to what would be 50% for random guesses due to binary nature 
+#WRONG, PROBABILITIES AREN'T EQUAL, NEED TO USE BINOMIAL DISTRIBUTION:
 
-#Now we try to apply the sklearn.clf with more than 1 variable. We will use n, the Disk to Total light ratio (D/T) (col 20),
+n = 260. #number of trials
+k = 224. #number of successes, n-k = number of failures
+p = 224./260
 
+probability = sp.misc.comb(n,k)*(p**k)*((1-p)**(n-k)) 
+#from http://stackoverflow.com/questions/22201913/computing-a-binomial-probability-for-huge-numbers
+#This codifies the binomial probability formula from http://www.mathwords.com/b/binomial_probability_formula.htm
+print probability
 
+n = 36. #number of trials
+k = 36. #number of successes, n-k = number of failures
+p = 36./260
 
-
+probability = sp.misc.comb(n,k)*(p**k)*((1-p)**(n-k))
+print probability
 
