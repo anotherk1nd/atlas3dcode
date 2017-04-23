@@ -12,6 +12,16 @@ from itertools import product # For decision boundary plotting
 import plotly.plotly as py #for barplot
 import plotly.graph_objs as go # for barplot
 py.sign_in('funkytimes', 'cQkjfMpg44MA2el0F6VB')
+import pandas as pd
+
+fr = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_edit.csv'
+dffr = pd.read_csv(fr)
+
+sr = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_edit.csv'
+dfsr = pd.read_csv(sr)
+
+al = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\all_rots_edit.csv'
+dfall = pd.read_csv(al)
 
 pl.close('all')
 fncsc = 'C:\\Users\\Joshua\\Documents\\Term 1\\Project\\Data\\atlas3d\\linkingphotometric.fit'
@@ -139,15 +149,6 @@ pl.plot(xx,yy)
 
 pl.show()
 """
-#We do a quick check to make sure that all the entries are in the same order for the Linking Photo data and the Original Atlas3D set
-"""
-repairlist = sp.zeros(260)
-for i in range(1,260):
-    if datacsc.field(0)[i+1] != datalam.field(2)[i]:
-        repairlist[i] = datacsc.field(1)[i]
-print repairlist
-"""
-#Since we are returned the array of zeros we started with, all the entries are in the same order and we can start playing
 
 #We try to predict based on D/T alone:
 dt = datacsc.field(19)[1:]
@@ -275,7 +276,6 @@ pl.legend([correct, incorrect], ['Correct','Incorrect'])
 pl.show()
 
 """
-#help(tree)
 
 
 #Including D/T improves success by 3% compared to using Cersic index alone, but,

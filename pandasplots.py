@@ -20,10 +20,13 @@ ax = dffr.plot.scatter(x='lam_sqrt_eps', y='D/T', color='DarkBlue', label='Fast 
 dfsr.plot.scatter(x='lam_sqrt_eps', y='D/T', color='DarkGreen', label='Slow Rotators',ax=ax)
 pl.show()
 """
+"""
 pl.plot(dffr['D/T'],dffr['lam_sqrt_eps'],'rx',label='Fast Rotators')
 pl.plot(dfsr['D/T'],dfsr['lam_sqrt_eps'],'go',label='Slow Rotators')
 pl.xlabel('D/T')
+pl.xlim(-0.1,1.0)
 pl.ylabel(r'$\lambda_{Re}$')
 pl.ylim(-0.1,1.0)
 pl.legend()
 pl.show()
+"""
