@@ -14,13 +14,13 @@ import plotly.graph_objs as go # for barplot
 py.sign_in('funkytimes', 'cQkjfMpg44MA2el0F6VB')
 import pandas as pd
 
-fr = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_edit.csv'
+fr = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_edit_corrected.csv'
 dffr = pd.read_csv(fr)
 
-sr = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_edit.csv'
+sr = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_edit.csv'#slow rots didnt need correcting
 dfsr = pd.read_csv(sr)
 
-al = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\all_rots_edit.csv'
+al = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\all_rots_edit_corrected.csv'
 dfall = pd.read_csv(al)
 
 pl.close('all')
@@ -175,29 +175,66 @@ total = true + false
 print 'D/T Success rate: ', round(float(true)/total,2)
 #We find the number of zeros in the dataset
 zeros = 0
+zero_correct = 0
+zero_incorrect = 0
 for i in range(len(dttest)):
     #print dttest[i]
     #print type(dttest[i])
     if dttest[i] == '0.00':
         zeros +=1
+    if dttest[i] == '0.00' and prediction[i] == fstest[i]:
+        zero_correct+=1
+    elif dttest[i] == '0.00' and prediction[i] != fstest[i]:
+        zero_incorrect +=1
+
+#We evaluate how the tree has assigned different predictions for the same value of D/T
+print 'correct: ', zero_correct
+print 'incorrect: ', zero_incorrect
 print 'Number of zeros in data', zeros
+print 'Success of zeros:, ', zero_correct/float(zeros)
 totalnumber = len(dttest)
 print totalnumber
-print zeros
 print 'Proportion of zeros in data: '
 print zeros/float(totalnumber)
+zero_and_fast = 0
+zero_and_slow = 0
+for i in range(len(dttrain)):
+    if dttrain[i] == '0.00' and fstrain[i] == 1:
+        zero_and_fast += 1
+    elif dttrain[i] == '0.00' and fstrain[i] == 0:
+        zero_and_slow += 1
+print 'zero and fast: ', zero_and_fast
+print 'zero and slow: ', zero_and_slow
+print 'proportion of zero and fast to total zeros', zero_and_fast/79.
+#We repeat for the predicted values
+pred_zero_and_fast = 0
+pred_zero_and_slow = 0
+for i in range(len(prediction)):
+    if prediction[i] == fstest[i]:
+        if dttest[i] == '0.00' and prediction[i] == 1:
+            pred_zero_and_fast += 1
+        elif dttest[i] == '0.00' and prediction[i] == 0:
+            print prediction[i]
+            pred_zero_and_slow += 1
 
+print 'zero and fast: ', pred_zero_and_fast
+print 'zero and slow: ', pred_zero_and_slow
+
+
+"""
 for i in range(len(fstest)):
     if fstest[i] == prediction[i]:
         correct, = pl.plot(dttest[i],lamtest[i],'b')
     if fstest[i] != prediction[i]:
         incorrect, = pl.plot(dttest[i],lamtest[i],'m+')
 #pl.title('Success of Classification Predictions Based on D/T')
+
 pl.xlabel('Disk-to-Total Light Ratio')
 pl.ylabel('Lambda Value')
 pl.xlim(-0.1,1.0)
 pl.legend([correct, incorrect], ['Correct','Incorrect'])
 pl.show()
+"""
 
 
 """
