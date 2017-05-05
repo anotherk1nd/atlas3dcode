@@ -64,27 +64,32 @@ for i in range(len(fs)):
 
 fast_rots = pd.DataFrame.from_dict(datalam[flist])
 fast_rots1 = fast_rots.assign(id=flist)#we add column with position in original fits file
-fast_rots_cersic = pd.DataFrame.from_dict(datacsc[flist])
-fast_rots_cersic.columns = fast_rots_cersic.iloc[0]
-#print fast_rots_cersic
+datacsc_nonames = datacsc[1:]
+fast_rots_cersic = pd.DataFrame.from_dict(datacsc_nonames[flist])
+print 'Here!'
+print fast_rots_cersic
+print fast_rots_cersic.columns
+fast_rots_cersic.columns = datacsc[0]
+print 'columns here'
+print fast_rots_cersic
 frames_fast_rots = [fast_rots1,fast_rots_cersic]
 #print frames_fast_rots
+print 'Ok below?'#NO
+print fast_rots
 fast_rots = pd.concat(frames_fast_rots,axis=1)
-fast_rots = fast_rots[1:]
+print 'problem?' #ico560 is there, but later columns repeat column names in entry 0
+#fast_rots = fast_rots[1:]
+print fast_rots
 slow_rots = pd.DataFrame.from_dict(datalam[slist])
 slow_rots1 = slow_rots.assign(id=slist)
 slow_rots_cersic = pd.DataFrame.from_dict(datacsc[slist])
 slow_rots_cersic.columns = fast_rots_cersic.columns
 frames_slow_rots = [slow_rots1,slow_rots_cersic]
-slow_rots = pd.concat(frames_slow_rots,axis=1)
-#print 'slow'
-#print slow_rots #Slow rotators total panda is GOOD!
-#print 'fast'
-#print_full(fast_rots)
+slow_rots = pd.concat(frames_slow_rots,axis=1)#slow rots didnt need correcting
 delete = ['Simbad','NED','LEDA','_RA','_DE','name']
-fast_rots.drop(['Simbad','NED','LEDA','_RA','_DE','name     '], axis=1, inplace=True)#Delete repeated and unnecessary columns
+#fast_rots.drop(['Simbad','NED','LEDA','_RA','_DE','name     '], axis=1, inplace=True)#Delete repeated and unnecessary columns
 #print fast_rots
-slow_rots.drop(['Simbad','NED','LEDA','_RA','_DE','name     '], axis=1, inplace=True)#Delete repeated and unnecessary columns
+#slow_rots.drop(['Simbad','NED','LEDA','_RA','_DE','name     '], axis=1, inplace=True)#Delete repeated and unnecessary columns
 fast_rots_lam_Re = fast_rots.iloc[:,10] # Pick out lamre
 fast_rots_eps = fast_rots.iloc[:,5]
 fast_lam_sqrt_eps = fast_rots_lam_Re.div(sp.sqrt(fast_rots_eps))
@@ -99,7 +104,8 @@ slow_lam_sqrt_eps = slow_rots_lam_Re.div(sp.sqrt(slow_rots_eps))
 #print fast_lam_sqrt_eps
 slow_rots.loc[:,35] = slow_lam_sqrt_eps[:]
 slow_rots.rename(columns={35:'lam_sqrt_eps'},inplace=True)
-#print_full(fast_rots)
+print 'Finished yet??'
+print_full(fast_rots)
 #print list(slow_rots.columns.values)
 
 #We remove spaces in the column names
@@ -108,6 +114,9 @@ fast_rots.rename(columns={'R_d ': 'R_d', 'q_d ': 'q_d', 'D/T ': 'D/T'}, inplace=
 slow_rots.rename(columns={'mu_e ': 'mu_e', 'R_e  ': 'R_e', 'n   ': 'n', 'n_b ': 'n_b', 'q_b ': 'q_b', 'm0_d ': 'm0_d'}, inplace=True)
 slow_rots.rename(columns={'R_d ': 'R_d', 'q_d ': 'q_d', 'D/T ': 'D/T'}, inplace=True)
 
+print 'Now here!'
+print fast_rots
+print slow_rots
 #fast_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_fin.csv')
 #slow_rots.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\slow_rots_fin.csv')
 
@@ -156,8 +165,9 @@ fast_rots_edit = fast_rots.drop(['_RAJ2000', '_DEJ2000','id'],axis=1)
 #fast_rots_edit.info()
 params =['Rmax','epse','lam_sqrt_eps','D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e']
 fast_rots_edit[params] = fast_rots_edit[params].astype(float)
-#fast_rots_edit.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_edit.csv')
+fast_rots_edit.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_edit_corrected.csv')
 #fast_rots_edit.info()
+"""
 axs = scatter_matrix(fast_rots_edit[params],alpha=0.2, diagonal='kde')
 #axs = pd.scatter_matrix( df, alpha=0.2, diagonal='kde')
 n = len(fast_rots_edit[params].columns)
@@ -173,9 +183,12 @@ for x in range(n):
         ax.yaxis.labelpad = 50
 #pl.title('Scatter Matrix of Spectroscopic Parameters for Fast Rotators')
 #pl.show()
+"""
+
 params1 =['D/T','n','n_b','q_b','m0_d','R_d','q_d','mu_e','F_S'] #INCLUDES F/S
-all_rots_edit = pd.concat([fast_rots_edit,slow_rots_edit])
-#all_rots_edit.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\all_rots_edit.csv')
+all_rots_edit_corrected = pd.concat([fast_rots_edit,slow_rots_edit])
+all_rots_edit_corrected.to_csv(r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\all_rots_edit_corrected.csv')
+"""
 axs = scatter_matrix(all_rots_edit[params],alpha=0.2, diagonal='kde')
 n = len(all_rots_edit[params].columns)
 for x in range(n):
@@ -191,3 +204,4 @@ for x in range(n):
 #print all_rots[params1]
 #radviz(all_rots[params1], 'F_S')
 pl.show()
+"""

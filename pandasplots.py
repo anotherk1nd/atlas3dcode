@@ -15,6 +15,8 @@ dfsr = pd.read_csv(sr)
 
 al = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\all_rots_edit.csv'
 dfall = pd.read_csv(al)
+
+print dfall
 """
 ax = dffr.plot.scatter(x='lam_sqrt_eps', y='D/T', color='DarkBlue', label='Fast Rotators')
 dfsr.plot.scatter(x='lam_sqrt_eps', y='D/T', color='DarkGreen', label='Slow Rotators',ax=ax)
