@@ -48,13 +48,16 @@ colinfo = hdulistcsc[0].data # gives column names, info
 datacsc = hdulistcsc[1].data
 csc = datacsc.field(5)[1:] #Using from 1 excludes the field name which is included in the data CERSIC INDEX FROM SINGLE FIT
 
+
 #We import the atlas3d data in order to access the lambda value and use the classifier code used in 1st attempt to implement classifier sklearn
 fnrotlam = 'C:\\Users\\Joshua\\Documents\\Term 1\\Project\\Code\\atlas3dcode\\atlas3d.fit'
 hdulistlam = fits.open(fnrotlam)
 colinfoatlas = hdulistlam[0].data
 #print colinfoatlas
 datalam = hdulistlam[1].data
+eps = datalam.field(4)
 lam = datalam.field(7)
+epstest = eps[len(eps)/2:]
 #print 'This is lam', lam
 
 fs = datalam.field(11)
@@ -219,6 +222,11 @@ true_slow = []
 dt_test_zero = []
 dttestfloat = sp.array(dttest).astype(float)#WORKS!, needed to convert strings to floats
 dttestfinal = dttestfloat.ravel()
+lamtestarray = sp.array(lamtest).astype(float)
+epstestarray = sp.array(epstest).astype(float)
+lamepstest = sp.divide(lamtestarray,sp.sqrt(epstestarray))
+print lamepstest
+
 zerocorrect = []
 zeroincorrect = []
 for i in range(len(prediction)):
@@ -270,6 +278,12 @@ pl.ylabel('$\lambda_{Re}$')
 pl.xlim(-0.1,1.1)
 pl.legend(loc=0)
 pl.show()
+
+#Calculate the binomial probability for success in predicting fast given by k successes in n trials, p is given by
+#correct/total
+sp.special.binom(79,71)*(71./79)**71*(1-71./79)**8
+
+#We now look at the success of the algorithm excluding those without disks.
 """
 for i in range(len(fstest)):
     if fstest[i] == prediction[i]:
