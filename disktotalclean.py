@@ -106,6 +106,7 @@ print clf.get_params()
 #We create arrays for to be able to plot the data, rather than as a list
 cscarray = sp.array(csc)
 datalamarray = sp.array(lam)
+lamtest = lam[len(fslist)/2:] 
 
 """ THIS PLOTS CLASSIFICATION OF ROTATION AS A FUNCTION OF CERSIC INDEX
 for i in range(len(fs)):
@@ -123,7 +124,8 @@ pl.ylabel('Lambda Value')
 pl.legend([fast_rotators, slow_rotators], ['Fast Rotators','Slow Rotators'])
 pl.show()
 """
-lamtest = lam[len(fslist)/2:] 
+
+
 """ 
 for i in range(len(fstest)):
     if fstest[i] == prediction[i]:
@@ -175,27 +177,28 @@ total = true + false
 print 'D/T Success rate: ', round(float(true)/total,2)
 #We find the number of zeros in the dataset
 zeros = 0
-zero_correct = 0
-zero_incorrect = 0
+zero_correct = []
+zero_incorrect = []
+"""
 for i in range(len(dttest)):
     #print dttest[i]
     #print type(dttest[i])
     if dttest[i] == '0.00':
         zeros +=1
     if dttest[i] == '0.00' and prediction[i] == fstest[i]:
-        zero_correct+=1
+        zero_correct.append(i)
     elif dttest[i] == '0.00' and prediction[i] != fstest[i]:
-        zero_incorrect +=1
-
+        zero_incorrect.append(i)
+"""
 #We evaluate how the tree has assigned different predictions for the same value of D/T
 print 'correct: ', zero_correct
 print 'incorrect: ', zero_incorrect
 print 'Number of zeros in data', zeros
-print 'Success of zeros:, ', zero_correct/float(zeros)
+#print 'Success of zeros:, ', zero_correct/float(zeros)
 totalnumber = len(dttest)
-print totalnumber
-print 'Proportion of zeros in data: '
-print zeros/float(totalnumber)
+#print totalnumber
+#print 'Proportion of zeros in data: '
+#print zeros/float(totalnumber)
 zero_and_fast = 0
 zero_and_slow = 0
 for i in range(len(dttrain)):
@@ -207,20 +210,66 @@ print 'zero and fast: ', zero_and_fast
 print 'zero and slow: ', zero_and_slow
 print 'proportion of zero and fast to total zeros', zero_and_fast/79.
 #We repeat for the predicted values
-pred_zero_and_fast = 0
-pred_zero_and_slow = 0
+pred_zero_and_fast = []
+pred_zero_and_slow = []
+correct = []
+incorrect = []
+pred_slow = []
+true_slow = []
+dt_test_zero = []
+dttestfloat = sp.array(dttest).astype(float)#WORKS!, needed to convert strings to floats
+dttestfinal = dttestfloat.ravel()
+zerocorrect = []
+zeroincorrect = []
 for i in range(len(prediction)):
+    if prediction[i] == 0:
+        #print 'prediction is slow'
+        pred_slow.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
+        #print prediction[i],fstest[i],dttest[i]
+    if dttestfloat[i] == 0:
+        dt_test_zero.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
     if prediction[i] == fstest[i]:
+        #pl.plot(fstest[i],dttestfloat[i],'rx',label='Correct Prediction')
+        #pl.xlim(-0.1,1.1)
+        correct.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
+        if dttestfinal[i] == 0:
+            zerocorrect.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
         if dttest[i] == '0.00' and prediction[i] == 1:
-            pred_zero_and_fast += 1
+            #print 'correct, dt is 0 and pred is fast'
+            pred_zero_and_fast.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]]) #we create array of zerodt and fast
         elif dttest[i] == '0.00' and prediction[i] == 0:
-            print prediction[i]
-            pred_zero_and_slow += 1
+            #print 'correct, dt is 0 and pred is slow'
+            pred_zero_and_slow.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
+    elif prediction[i] != fstest[i]:
+        if dttestfinal[i] == 0:
+            zeroincorrect.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
+        #pl.plot(fstest[i],dttestfloat[i],'bo',label='Incorrect Prediction')
+        incorrect.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])#we create array of incorrect
+    else:
+        print 'woops!'
+        break
 
 print 'zero and fast: ', pred_zero_and_fast
 print 'zero and slow: ', pred_zero_and_slow
 
+print 'predicted slow: ', pred_slow
+print 'zero dt: ', dt_test_zero
+print 'correct: ', correct
+print 'zero and correct ', zerocorrect
+print 'zero and incorrect ', zeroincorrect
 
+def column(matrix, i): #We create a function to extract column from 2d list
+    return [row[i] for row in matrix]
+print column(correct,1)
+
+
+pl.plot(column(zerocorrect,0),column(zerocorrect,3),'gx',label='Correct Prediction')
+pl.plot(column(zeroincorrect,0),column(zeroincorrect,3),'rx',label='Incorrect Prediction')
+pl.xlabel('Fast/slow Status')
+pl.ylabel('$\lambda_{Re}$')
+pl.xlim(-0.1,1.1)
+pl.legend(loc=0)
+pl.show()
 """
 for i in range(len(fstest)):
     if fstest[i] == prediction[i]:
