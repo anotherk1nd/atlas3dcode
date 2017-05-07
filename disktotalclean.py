@@ -2,17 +2,53 @@
 """
 Here we attempt to implement sklearn with the photometric data.
 """
+import itertools
 import matplotlib.pyplot as pl
 import sklearn
 from sklearn import datasets, svm, metrics, tree
+from sklearn.metrics import confusion_matrix
 from astropy.io import fits
 import scipy as sp
+import numpy as np
 from astropy.io.fits import getheader
 from itertools import product # For decision boundary plotting
 import plotly.plotly as py #for barplot
 import plotly.graph_objs as go # for barplot
 py.sign_in('funkytimes', 'cQkjfMpg44MA2el0F6VB')
 import pandas as pd
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=pl.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    pl.imshow(cm, interpolation='nearest', cmap=cmap)
+    pl.title(title)
+    pl.colorbar()
+    tick_marks = np.arange(len(classes))
+    pl.xticks(tick_marks, classes, rotation=45)
+    pl.yticks(tick_marks, classes)
+
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        cm = np.round(cm,2)
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        pl.text(j, i, cm[i, j],
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    pl.tight_layout()
+    pl.ylabel('True label')
+    pl.xlabel('Predicted label')
 
 fr = r'C:\Users\Joshua\Documents\Term 1\Project\Code\atlas3dcode\fast_rots_edit_corrected.csv'
 dffr = pd.read_csv(fr)
@@ -95,21 +131,40 @@ csctest = csctest[:,None]
 
 #This method came from http://scikit-learn.org/stable/modules/svm.html#svm
 clf = tree.DecisionTreeClassifier()
-#clas = clf.fit(csctrain,fstrain) # We train the tree using the lamre value and F,S classification as test
+clf.fit(csctrain,fstrain) # We train the tree using the lamre value and F,S classification as test
 
-"""
-prediction = clf.predict(csctest).copy()
+
+prediction_csc = clf.predict(csctest).copy()
 #print 'Prediction: ', prediction
 #print 'True Values: ', fstest
 
-print clf.score(csctest,fstest) #This computes the success rate by itself
-print clf.get_params()
+#print clf.score(csctest,fstest) #This computes the success rate by itself
+#print clf.get_params()
+
+"""
+# Compute confusion matrix FOR SERSIC!!
+cnf_matrix = confusion_matrix(fstest, prediction_csc)
+np.set_printoptions(precision=2)
+class_names = ['Slow','Fast']
+# Plot non-normalized confusion matrix
+pl.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names,
+                      title='Confusion matrix, without normalization')
+
+# Plot normalized confusion matrix
+pl.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
+                      title='Normalized confusion matrix')
+
+pl.show()
 """
 
 #We create arrays for to be able to plot the data, rather than as a list
 cscarray = sp.array(csc)
 datalamarray = sp.array(lam)
 lamtest = lam[len(fslist)/2:] 
+
+
 
 """ THIS PLOTS CLASSIFICATION OF ROTATION AS A FUNCTION OF CERSIC INDEX
 for i in range(len(fs)):
@@ -163,21 +218,27 @@ dttrain = dt[:len(fslist)/2]
 dttest = dt[len(fslist)/2:]
 clf = tree.DecisionTreeClassifier()
 clf.fit(dttrain,fstrain) # We train the tree using the lamre value and F,S classification as test
-prediction = clf.predict(dttest).copy()
+prediction_dt = clf.predict(dttest).copy()
 #print 'Prediction: ', prediction
 #print 'True Values: ', fstest
-true = 0
-false = 0
-for i in range(len(prediction)):
-    if prediction[i] == fstest[i]:
-        true += 1
-    else:
-        false += 1
+#print clf.score()
+"""
+#Confusion matrix for DISK TO TOTAL
+cnf_matrix = confusion_matrix(fstest, prediction_dt)
+np.set_printoptions(precision=2)
+class_names = ['Slow','Fast']
+# Plot non-normalized confusion matrix
+pl.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names,
+                      title='Confusion matrix, without normalization')
 
-print 'True: ',true
-print 'False: ',false
-total = true + false
-print 'D/T Success rate: ', round(float(true)/total,2)
+# Plot normalized confusion matrix
+pl.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
+                      title='Normalized confusion matrix')
+
+pl.show()
+"""
 #We find the number of zeros in the dataset
 zeros = 0
 zero_correct = []
@@ -229,30 +290,30 @@ lamepstest = sp.divide(lamtestarray,sp.sqrt(epstestarray))
 
 zerocorrect = []
 zeroincorrect = []
-for i in range(len(prediction)):
-    if prediction[i] == 0:
+for i in range(len(prediction_dt)):
+    if prediction_dt[i] == 0:
         #print 'prediction is slow'
-        pred_slow.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
+        pred_slow.append([fstest[i],prediction_dt[i],dttestfinal[i],lamtest[i]])
         #print prediction[i],fstest[i],dttest[i]
     if dttestfloat[i] == 0:
-        dt_test_zero.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
-    if prediction[i] == fstest[i]:
+        dt_test_zero.append([fstest[i],prediction_dt[i],dttestfinal[i],lamtest[i]])
+    if prediction_dt[i] == fstest[i]:
         #pl.plot(fstest[i],dttestfloat[i],'rx',label='Correct Prediction')
         #pl.xlim(-0.1,1.1)
-        correct.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
+        correct.append([fstest[i],prediction_dt[i],dttestfinal[i],lamtest[i]])
         if dttestfinal[i] == 0:
-            zerocorrect.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
-        if dttest[i] == '0.00' and prediction[i] == 1:
+            zerocorrect.append([fstest[i],prediction_dt[i],dttestfinal[i],lamtest[i]])
+        if dttest[i] == '0.00' and prediction_dt[i] == 1:
             #print 'correct, dt is 0 and pred is fast'
-            pred_zero_and_fast.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]]) #we create array of zerodt and fast
-        elif dttest[i] == '0.00' and prediction[i] == 0:
+            pred_zero_and_fast.append([fstest[i],prediction_dt[i],dttestfinal[i],lamtest[i]]) #we create array of zerodt and fast
+        elif dttest[i] == '0.00' and prediction_dt[i] == 0:
             #print 'correct, dt is 0 and pred is slow'
-            pred_zero_and_slow.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
-    elif prediction[i] != fstest[i]:
+            pred_zero_and_slow.append([fstest[i],prediction_dt[i],dttestfinal[i],lamtest[i]])
+    elif prediction_dt[i] != fstest[i]:
         if dttestfinal[i] == 0:
-            zeroincorrect.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
+            zeroincorrect.append([fstest[i],prediction_dt[i],dttestfinal[i],lamtest[i]])
         #pl.plot(fstest[i],dttestfloat[i],'bo',label='Incorrect Prediction')
-        incorrect.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])#we create array of incorrect
+        incorrect.append([fstest[i],prediction_dt[i],dttestfinal[i],lamtest[i]])#we create array of incorrect
     else:
         print 'woops!'
         break
@@ -370,6 +431,7 @@ correct_2d[:,4] = csctest[true,0]
 #print correct_2d
 #print correct_2d
 
+"""
 #pl.tight_layout()
 pl.subplot(2,2,1)
 pl.scatter(correct_2d[:,2],correct_2d[:,3],c=100*correct_2d[:,0])#plots lam against dt
@@ -386,12 +448,34 @@ pl.xlabel('Ce\'rsic Index')
 pl.xlim(0,12)
 pl.ylim(0.0,1.8)
 
+"""
 incorrect_2d[:,0] = fstest[false]
 incorrect_2d[:,1] = prediction[false]
 incorrect_2d[:,2] = dttestfinal[false]
 incorrect_2d[:,3] = lamepstest[false]
 incorrect_2d[:,4] = csctest[false,0]
 
+#print sklearn.metrics.confusion_matrix(fstest,prediction)
+#tn, fp, fn, tp = sklearn.metrics.confusion_matrix(fstest, prediction).ravel()
+#print tn, fp, fn, tp
+
+
+# Compute confusion matrix FOR 2D
+cnf_matrix = confusion_matrix(fstest, prediction)
+np.set_printoptions(precision=2)
+class_names = ['Slow','Fast']
+# Plot non-normalized confusion matrix
+pl.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names,
+                      title='Confusion matrix, without normalization')
+
+# Plot normalized confusion matrix
+pl.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True)
+
+pl.show()
+
+"""
 pl.subplot(2,2,3)
 pl.scatter(incorrect_2d[:,2],incorrect_2d[:,3],c=100*incorrect_2d[:,0])#plots lam against dt
 pl.title('Incorrect Predictions')
@@ -407,11 +491,11 @@ pl.xlabel('Ce\'rsic Index')
 pl.xlim(0,12)
 pl.ylim(0.0,1.8)
 pl.tight_layout()
-pl.legend()
 pl.show()
 #score = clf.score(featurestest,fstest)
 #print score
 
+"""
 """
 #Here I was thinking of using different markers for different values of dt, but need markers to represent correctness
 #Instead I will plot 2 graphs for 2 variables side by side

@@ -34,7 +34,7 @@ cols = hdulistphoto[1].columns
 #print colinfo
 dataphoto = hdulistphoto[1].data
 csc = dataphoto.field(5)[1:] #Using from 1 excludes the field name which is included in the data CERSIC INDEX FROM SINGLE FIT
-print csc
+#print csc
 
 #We import the atlas3d data in order to access the lambda value and use the classifier code used in 1st attempt to implement classifier sklearn
 atlas3d = 'C:\\Users\\Joshua\\Documents\\Term 1\\Project\\Code\\atlas3dcode\\atlas3d.fit'
@@ -50,8 +50,8 @@ for i in range(len(fs)):
         fcount +=1
     else:
         scount +=1
-print 'Fcount:', fcount
-print 'Scount:', scount
+#print 'Fcount:', fcount
+#print 'Scount:', scount
 
 #We create an array containing a binary interpretation of the fast/slow
 #categorisation, with 1 indicating fast rotator, so we can pass the array to 
@@ -63,7 +63,7 @@ for i in range(len(fs)):
         fslist[i] = 1
     else:
         fslist[i] = 0
-print 'Full list = ',fslist
+#print 'Full list = ',fslist
 
 #We split the array into 2 equally sized arrays to form a training and test set
 fstrain = fslist[:len(fslist)/2]
@@ -74,8 +74,8 @@ csctrain = csc[:len(fslist)/2]
 csctest = csc[len(fslist)/2:]
 
 #Training and test set formed by dividing arbitrarily in 2 by position in dataset
-print 'Training set' ,fstrain
-print 'Test set:',fstest
+#print 'Training set' ,fstrain
+#print 'Test set:',fstest
 
 #lamre = lamre[:,None] #Found soln http://stackoverflow.com/questions/32198355/error-with-sklearn-random-forest-regressor
 csctrain = csctrain[:,None]
@@ -85,13 +85,13 @@ csctest = csctest[:,None]
 clf = tree.DecisionTreeClassifier()
 clf.fit(csctrain,fstrain) # We train the tree using the lamre value and F,S classification as test
 prediction = clf.predict(csctest).copy()
-print 'Prediction: ', prediction
-print 'True Values: ', fstest
+#print 'Prediction: ', prediction
+#print 'True Values: ', fstest
 print 'Plain Old Tree',clf.score(csctest,fstest)
 
 clf_forest = RandomForestClassifier(n_estimators=5)
-#clf_forest.fit(csctrain,fstrain)
-#print 'Random Forest: ',clf_forest.score(csctest,fstest)
+clf_forest.fit(csctrain,fstrain)
+print 'Random Forest: ',clf_forest.score(csctest,fstest)
 #We assess the accuracy of the predictions. for some reason, the prediction.all method doesn't work,
 #so had to code it manually.
 """
@@ -117,8 +117,8 @@ dt = dt1[:,None]
 dttrain = dt[:len(fslist)/2]
 dttest = dt[len(fslist)/2:]
 clf_forest = RandomForestClassifier(n_estimators=5)
-#clf_forest.fit(dttrain,fstrain)
-#print 'Random Forest D/T: ',clf_forest.score(dttest,fstest)
+clf_forest.fit(dttrain,fstrain)
+print 'Random Forest D/T: ',clf_forest.score(dttest,fstest)
 
 #We then use both D/t and sersic for random forest
 features = sp.zeros([260,2])
