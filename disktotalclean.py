@@ -225,7 +225,7 @@ dttestfinal = dttestfloat.ravel()
 lamtestarray = sp.array(lamtest).astype(float)
 epstestarray = sp.array(epstest).astype(float)
 lamepstest = sp.divide(lamtestarray,sp.sqrt(epstestarray))
-print lamepstest
+#print lamepstest
 
 zerocorrect = []
 zeroincorrect = []
@@ -257,20 +257,20 @@ for i in range(len(prediction)):
         print 'woops!'
         break
 
-print 'zero and fast: ', pred_zero_and_fast
-print 'zero and slow: ', pred_zero_and_slow
+#print 'zero and fast: ', pred_zero_and_fast
+#print 'zero and slow: ', pred_zero_and_slow
 
-print 'predicted slow: ', pred_slow
-print 'zero dt: ', dt_test_zero
-print 'correct: ', correct
-print 'zero and correct ', zerocorrect
-print 'zero and incorrect ', zeroincorrect
+#print 'predicted slow: ', pred_slow
+#print 'zero dt: ', dt_test_zero
+#print 'correct: ', correct
+#print 'zero and correct ', zerocorrect
+#print 'zero and incorrect ', zeroincorrect
 
 def column(matrix, i): #We create a function to extract column from 2d list
     return [row[i] for row in matrix]
-print column(correct,1)
+#print column(correct,1)
 
-
+"""
 pl.plot(column(zerocorrect,0),column(zerocorrect,3),'gx',label='Correct Prediction')
 pl.plot(column(zeroincorrect,0),column(zeroincorrect,3),'rx',label='Incorrect Prediction')
 pl.xlabel('Fast/slow Status')
@@ -278,10 +278,10 @@ pl.ylabel('$\lambda_{Re}$')
 pl.xlim(-0.1,1.1)
 pl.legend(loc=0)
 pl.show()
-
+"""
 #Calculate the binomial probability for success in predicting fast given by k successes in n trials, p is given by
 #correct/total
-sp.special.binom(79,71)*(71./79)**71*(1-71./79)**8
+#sp.special.binom(79,71)*(71./79)**71*(1-71./79)**8
 
 #We now look at the success of the algorithm excluding those without disks.
 """
@@ -329,7 +329,7 @@ data = [go.Bar(
 #Using dt[i+1] excludes the field name which is included in the data CERSIC INDEX FROM SINGLE FIT
 # We need to combine the data into an array that has both datapoints in a subarray for each member of the new array
 """
-"""
+
 dt = datacsc.field(19)
 #print dt
 features = sp.zeros([260,2])
@@ -350,26 +350,94 @@ clf.fit(featurestrain,fstrain) # We train the tree using the lamre value and F,S
 prediction = clf.predict(featurestest).copy()
 #print 'Prediction: ', prediction
 #print 'True Values: ', fstest
-true = 0
-false = 0
+true = [] #We create lists of id number of correct and incorrect predictions
+false = []
+
 for i in range(len(prediction)):
     if prediction[i] == fstest[i]:
-        true += 1
+        true.append(i)
+        #correct_2d.append([fstest[i],prediction[i],dttestfinal[i],lamtest[i]])
     else:
-        false += 1
+        false.append(i)
+correct_2d = sp.zeros((len(true),5))
+incorrect_2d = sp.zeros((len(false),5))
+#for i in range(len(true)):
+correct_2d[:,0] = fstest[true]
+correct_2d[:,1] = prediction[true]
+correct_2d[:,2] = dttestfinal[true]
+correct_2d[:,3] = lamtest[true]
+correct_2d[:,4] = csctest[true,0]
+print correct_2d
+#print correct_2d
 
-print 'True: ',true
-print 'False: ',false
-total = true + false
-print 'Success rate: ', round(float(true)/total,2)
+#pl.tight_layout()
+pl.subplot(2,2,1)
+pl.scatter(correct_2d[:,2],correct_2d[:,3],color='green')#plots lam against dt
+pl.title('Correct Predictions')
+pl.xlabel('D/T')
+pl.ylabel('$\lambda$')
+pl.xlim(-0.1,1.0)
+pl.ylim(-0.0,1.2)
 
+pl.subplot(2,2,2)
+pl.scatter(correct_2d[:,4],correct_2d[:,3],color='green')#plots lam against csc
+pl.title('Correct Predictions')
+pl.xlabel('Ce\'rsic Index')
+pl.xlim(0,12)
+pl.ylim(0.0,1.2)
 
+incorrect_2d[:,0] = fstest[false]
+incorrect_2d[:,1] = prediction[false]
+incorrect_2d[:,2] = dttestfinal[false]
+incorrect_2d[:,3] = lamtest[false]
+incorrect_2d[:,4] = csctest[false,0]
+
+pl.subplot(2,2,3)
+pl.scatter(incorrect_2d[:,2],incorrect_2d[:,3],color='red')#plots lam against dt
+pl.title('Incorrect Predictions')
+pl.xlabel('D/T')
+pl.ylabel('$\lambda$')
+pl.xlim(-0.1,1.0)
+pl.ylim(-0.0,1.2)
+
+pl.subplot(2,2,4)
+pl.scatter(incorrect_2d[:,4],incorrect_2d[:,3],color='red')#plots lam against csc
+pl.title('Incorrect Predictions')
+pl.xlabel('Ce\'rsic Index')
+pl.xlim(0,12)
+pl.ylim(0.0,1.2)
+pl.tight_layout()
+pl.show()
+#score = clf.score(featurestest,fstest)
+#print score
+
+"""
+#Here I was thinking of using different markers for different values of dt, but need markers to represent correctness
+#Instead I will plot 2 graphs for 2 variables side by side
+for i in range(len(fstest)):
+    if featurestest[i,0] < 2.:
+        csc2.append(featurestest[i,0])
+        correct, = pl.plot(dttest[i],lamtest[i],'bd')
+    elif featurestest[i,0] < 4.:
+        csc4.append(featurestest[i,0])
+    elif featurestest[i,0] < 6.:
+        csc6.append(featurestest[i,0])
+    elif featurestest[i,0] < 8.:
+        csc8.append(featurestest[i,0])
+    elif featurestest[i,0] < 10.:
+        csc10.append(featurestest[i,0])
+    elif featurestest[i,0] <= 12.:
+        csc12.append(featurestest[i,0])
+"""
+"""
 for i in range(len(fstest)):
     if fstest[i] == prediction[i]:
-        correct, = pl.plot(dttest[i],lamtest[i],'bd')
+        correctdt, = pl.plot(dttest[i],lamtest[i],'bd')
+        correctn, = 
     if fstest[i] != prediction[i]:
-        incorrect, = pl.plot(dttest[i],lamtest[i],'m+')
-pl.title('Success of Classification Predictions Based on D/T')
+        incorrectdt, = pl.plot(dttest[i],lamtest[i],'m+')
+
+pl.title('Success of Classification Predictions Based on D/T and Se\'rsic Index')
 pl.xlabel('D/T')
 pl.ylabel('Lambda Value')
 pl.legend([correct, incorrect], ['Correct','Incorrect'])
