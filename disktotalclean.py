@@ -365,48 +365,49 @@ incorrect_2d = sp.zeros((len(false),5))
 correct_2d[:,0] = fstest[true]
 correct_2d[:,1] = prediction[true]
 correct_2d[:,2] = dttestfinal[true]
-correct_2d[:,3] = lamtest[true]
+correct_2d[:,3] = lamepstest[true]
 correct_2d[:,4] = csctest[true,0]
-print correct_2d
+#print correct_2d
 #print correct_2d
 
 #pl.tight_layout()
 pl.subplot(2,2,1)
-pl.scatter(correct_2d[:,2],correct_2d[:,3],color='green')#plots lam against dt
+pl.scatter(correct_2d[:,2],correct_2d[:,3],c=100*correct_2d[:,0])#plots lam against dt
 pl.title('Correct Predictions')
 pl.xlabel('D/T')
-pl.ylabel('$\lambda$')
+pl.ylabel('$\lambda_{Re}$')
 pl.xlim(-0.1,1.0)
-pl.ylim(-0.0,1.2)
+pl.ylim(-0.0,1.8)
 
 pl.subplot(2,2,2)
-pl.scatter(correct_2d[:,4],correct_2d[:,3],color='green')#plots lam against csc
+pl.scatter(correct_2d[:,4],correct_2d[:,3],c=100*correct_2d[:,0])#plots lam against csc
 pl.title('Correct Predictions')
 pl.xlabel('Ce\'rsic Index')
 pl.xlim(0,12)
-pl.ylim(0.0,1.2)
+pl.ylim(0.0,1.8)
 
 incorrect_2d[:,0] = fstest[false]
 incorrect_2d[:,1] = prediction[false]
 incorrect_2d[:,2] = dttestfinal[false]
-incorrect_2d[:,3] = lamtest[false]
+incorrect_2d[:,3] = lamepstest[false]
 incorrect_2d[:,4] = csctest[false,0]
 
 pl.subplot(2,2,3)
-pl.scatter(incorrect_2d[:,2],incorrect_2d[:,3],color='red')#plots lam against dt
+pl.scatter(incorrect_2d[:,2],incorrect_2d[:,3],c=100*incorrect_2d[:,0])#plots lam against dt
 pl.title('Incorrect Predictions')
 pl.xlabel('D/T')
-pl.ylabel('$\lambda$')
+pl.ylabel('$\lambda_{Re}$')
 pl.xlim(-0.1,1.0)
-pl.ylim(-0.0,1.2)
+pl.ylim(-0.0,1.8)
 
 pl.subplot(2,2,4)
-pl.scatter(incorrect_2d[:,4],incorrect_2d[:,3],color='red')#plots lam against csc
+pl.scatter(incorrect_2d[:,4],incorrect_2d[:,3],c=100*incorrect_2d[:,0])#plots lam against csc
 pl.title('Incorrect Predictions')
 pl.xlabel('Ce\'rsic Index')
 pl.xlim(0,12)
-pl.ylim(0.0,1.2)
+pl.ylim(0.0,1.8)
 pl.tight_layout()
+pl.legend()
 pl.show()
 #score = clf.score(featurestest,fstest)
 #print score
