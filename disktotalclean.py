@@ -459,7 +459,7 @@ incorrect_2d[:,4] = csctest[false,0]
 #tn, fp, fn, tp = sklearn.metrics.confusion_matrix(fstest, prediction).ravel()
 #print tn, fp, fn, tp
 
-
+"""
 # Compute confusion matrix FOR 2D
 cnf_matrix = confusion_matrix(fstest, prediction)
 np.set_printoptions(precision=2)
@@ -472,6 +472,35 @@ plot_confusion_matrix(cnf_matrix, classes=class_names,
 # Plot normalized confusion matrix
 pl.figure()
 plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True)
+
+pl.show()
+"""
+
+#We train the classifer using the specified best parameters found in gridsearch in other file
+clf_best = tree.DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=4,
+            max_features='sqrt', max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=None, splitter='best')
+
+clf_best.fit(csctrain,fstrain)
+prediction_best = clf_best.predict(csctest)
+print 'Here', clf_best.score(csctest,fstest)
+
+#We then plot the confusion matrix for the best estimator
+
+cnf_matrix = confusion_matrix(fstest, prediction_best)
+np.set_printoptions(precision=2)
+class_names = ['Slow','Fast']
+# Plot non-normalized confusion matrix
+#pl.figure()
+#plot_confusion_matrix(cnf_matrix, classes=class_names,
+#                      title='Confusion matrix, without normalization')
+
+# Plot normalized confusion matrix
+pl.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
+                      title='Normalized confusion matrix')
 
 pl.show()
 

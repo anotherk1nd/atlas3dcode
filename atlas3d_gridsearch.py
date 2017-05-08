@@ -6,10 +6,45 @@ import matplotlib.pyplot as pl
 import sklearn
 from sklearn import datasets, svm, metrics, tree
 from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score,classification_report,confusion_matrix
 from astropy.io import fits
 import scipy as sp
+import numpy as np
+import itertools
 from astropy.io.fits import getheader
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=pl.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    pl.imshow(cm, interpolation='nearest', cmap=cmap)
+    pl.title(title)
+    pl.colorbar()
+    tick_marks = np.arange(len(classes))
+    pl.xticks(tick_marks, classes, rotation=45)
+    pl.yticks(tick_marks, classes)
+
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        cm = np.round(cm,2)
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        pl.text(j, i, cm[i, j],
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    pl.tight_layout()
+    pl.ylabel('True label')
+    pl.xlabel('Predicted label')
 
 pl.close('all')
 fnphoto = 'C:\\Users\\Joshua\\Documents\\Term 1\\Project\\Data\\atlas3d\\linkingphotometric.fit'
@@ -113,3 +148,8 @@ print 'Best Score: ',tree.best_score_ #IMPROVED SUCCESS RATE TO 93%!!!!!!!!!
 for params, mean_score, scores in tree.grid_scores_:
         print("%0.3f (+/-%0.03f) for %r"
               % (mean_score, scores.std() / 2, params))
+
+fs_pred = tree.predict(csctest)
+print tree.score(csctest,fstest)
+print(classification_report(fstest,fs_pred, target_names=['Slow','Fast']))
+print(confusion_matrix(fstest,fs_pred,))
