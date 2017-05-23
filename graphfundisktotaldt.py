@@ -93,6 +93,7 @@ csctest = csctest[:,None]
 clf = tree.DecisionTreeClassifier()
 #clas = clf.fit(csctrain,fstrain) # We train the tree using the lamre value and F,S classification as test
 
+
 """
 prediction = clf.predict(csctest).copy()
 #print 'Prediction: ', prediction
@@ -138,7 +139,11 @@ pl.ylabel('Lambda Value')
 pl.legend([fast_rotators, slow_rotators], ['Fast Rotators','Slow Rotators'])
 pl.show()
 """
-lamtest = lam[len(fslist)/2:] 
+lamtest = lam[len(fslist)/2:]
+eps = datalam.field(4)
+epstest = eps[len(eps)/2:]
+lamepstest = sp.divide(lamtest,sp.sqrt(epstest)) 
+
 """ 
 for i in range(len(fstest)):
     if fstest[i] == prediction[i]:
@@ -177,12 +182,25 @@ print repairlist
 #We try to predict based on D/T alone:
 dt = datacsc.field(19)[1:]
 print dt
+
 dt = dt[:,None]
 dttrain = dt[:len(fslist)/2]
 dttest = dt[len(fslist)/2:]
 clf = tree.DecisionTreeClassifier()
 clf.fit(dttrain,fstrain) # We train the tree using the lamre value and F,S classification as test
 prediction = clf.predict(dttest).copy()
+notzeros = []
+notzerostest = []
+for i in range(len(dttrain)):
+    #print dttest[i]
+    #print type(dttest[i])
+    if dttrain[i] != '0.00':
+        notzeros.append(i)
+    if dttest[i] != '0.00':
+        notzerostest.append(i)
+clf.fit(dttrain,fstrain)
+prediction_notzeros = clf.predict(dttest[notzerostest])
+print 'yoiiiy',clf.score(dttest[notzerostest],fstest[notzerostest])
 #print 'Prediction: ', prediction
 #print 'True Values: ', fstest
 true = 0
@@ -198,30 +216,62 @@ print 'False: ',false
 total = true + false
 print 'D/T Success rate: ', round(float(true)/total,2)
 #We find the number of zeros in the dataset
-zeros = 0
-for i in range(len(dttest)):
-    #print dttest[i]
-    #print type(dttest[i])
-    if dttest[i] == '0.00':
-        zeros +=1
-print 'Number of zeros in data', zeros
-totalnumber = len(dttest)
-print totalnumber
-print zeros
-print 'Proportion of zeros in data: '
-print zeros/float(totalnumber)
-"""
+
+#print 'Number of zeros in data', zeros
+#totalnumber = len(dttest)
+#print totalnumber
+#print zeros
+#print 'Proportion of zeros in data: '
+#print zeros/float(totalnumber)
+
 for i in range(len(fstest)):
     if fstest[i] == prediction[i]:
-        correct, = pl.plot(dttest[i],lamtest[i],'b')
+        if fstest[i] == 0.0:
+            correct_slow, = pl.plot(dttest[i],lamepstest[i],'go')
+        elif fstest[i] == 1.0:
+            correct_fast, = pl.plot(dttest[i],lamepstest[i],'ys')
     if fstest[i] != prediction[i]:
-        incorrect, = pl.plot(dttest[i],lamtest[i],'m+')
-pl.title('Success of Classification Predictions Based on D/T')
-pl.xlabel('Disk-to-Total Light Ratio')
-pl.ylabel('Lambda Value')
+        if fstest[i] == 0.0:
+            incorrect_slow, = pl.plot(dttest[i],lamepstest[i],'ro')
+        elif fstest[i] == 1.0:
+            incorrect_fast, = pl.plot(dttest[i],lamepstest[i],'ms')
+#pl.title('Success of Classification Predictions Based on D/T')
+pl.xlabel('D/T')
+pl.ylabel('$\lambda_{Re}$')
 pl.xlim(-0.1,1.0)
-pl.legend([correct, incorrect], ['Correct','Incorrect'])
+pl.legend([correct_slow, correct_fast, incorrect_slow,incorrect_fast], ['Correct and slow','Correct and Fast','Incorrect and slow','Incorrect and fast'])
 pl.show()
+raw_input('Close?')
+pl.close('all')
+
+#We retrain the algorithm excluding those with D/T = 0
+        
+fstrainnz = fstrain[notzeros]
+dttrainnz = dttrain[notzeros]
+dttestnz = dttest[notzerostest]
+fstestnz = fstest[notzerostest]
+lamepstestnz = lamepstest[notzerostest]
+clf.fit(dttrainnz,fstrainnz)
+predictionnz = clf.predict(dttestnz).copy()
+print 'here',clf.score(dttestnz,fstestnz)
+for i in range(len(fstestnz)):
+    if fstestnz[i] == predictionnz[i]:
+        if fstestnz[i] == 0.0:
+            correct_slow, = pl.plot(dttestnz[i],lamepstestnz[i],'go')
+        elif fstest[i] == 1.0:
+            correct_fast, = pl.plot(dttestnz[i],lamepstestnz[i],'ys')
+    if fstest[i] != prediction[i]:
+        if fstest[i] == 0.0:
+            incorrect_slow, = pl.plot(dttestnz[i],lamepstestnz[i],'ro')
+        elif fstest[i] == 1.0:
+            incorrect_fast, = pl.plot(dttestnz[i],lamepstestnz[i],'ms')
+pl.legend([correct_slow, correct_fast, incorrect_slow,incorrect_fast], ['Correct and slow','Correct and Fast','Incorrect and slow','Incorrect and fast'])
+pl.xlabel('D/T')
+pl.ylabel('$\lambda_{Re}$')
+pl.show()
+
+
+
 """
 #print dttest
 #Here we look at success rate of just zeros
@@ -250,6 +300,7 @@ data = [go.Bar(
 #Now we try to apply the sklearn.clf with more than 1 variable. We will use n, the Disk to Total light ratio (D/T) (col 20),
 #Using dt[i+1] excludes the field name which is included in the data CERSIC INDEX FROM SINGLE FIT
 # We need to combine the data into an array that has both datapoints in a subarray for each member of the new array
+"""
 """
 dt = datacsc.field(19)
 #print dt

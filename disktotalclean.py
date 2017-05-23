@@ -493,14 +493,14 @@ cnf_matrix = confusion_matrix(fstest, prediction_best)
 np.set_printoptions(precision=2)
 class_names = ['Slow','Fast']
 # Plot non-normalized confusion matrix
-#pl.figure()
-#plot_confusion_matrix(cnf_matrix, classes=class_names,
-#                      title='Confusion matrix, without normalization')
+pl.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names,
+                      title='Confusion matrix, without normalization')
 
 # Plot normalized confusion matrix
-pl.figure()
-plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
-                      title='Normalized confusion matrix')
+#pl.figure()
+#plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
+#                      title='Normalized confusion matrix')
 
 pl.show()
 
